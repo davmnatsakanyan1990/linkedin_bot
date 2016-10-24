@@ -92,9 +92,9 @@ function submit_key() {
                 plan = data.plan;
                 license_key = data.license_key;
                 modal_close();
-                localStorage.removeItem('pages_loaded');
+                deleteCookie('pages_loaded');
                 pages_loaded = 1;
-                localStorage.setItem('pages_loaded', 1);
+                setCookie('pages_loaded', 1, 3600);
                 localStorage.removeItem('skipped_users_count');
                 localStorage.removeItem('current_visits_count');
                 current_visits_count = 0;
@@ -310,7 +310,7 @@ function show_extension(){
             '</div>'+
             '<div class="ext_bottom">'+
                 '<ul>' +
-                    '<li><a href="#">Download Profiles</a></li>'+
+                    // '<li><a href="#">Download Profiles</a></li>'+
                     '<li><a href="#">Get Help</a></li>'+
                     '<li><a href="/wvmx/profile">Who is viewed your profile</a></li>'+
                     '<li><a href="/wvmx/profile/rankings">How you rank</a></li>'+
@@ -370,16 +370,54 @@ function is_started(){
     var url = window.location.href;
     return url.includes('auto_visit=yes');
 }
+function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length == 2)
+        return parts.pop().split(";").shift();
+    else
+        return 0;
+
+
+}
+
+function setCookie(index, value, expires) {
+    var now = new Date();
+    var time = now.getTime();
+    time += 1000 * expires;
+    now.setTime(time);
+    document.cookie =
+        index+'=' + value +
+        '; expires=' + now.toUTCString() +
+        '; path=/';
+}
+
+function deleteCookie(index){
+    var now = new Date();
+    var time = now.getTime();
+    now.setTime(time);
+    document.cookie =
+        index+'=' +
+        '; expires=' + now.toUTCString() +
+        '; path=/';
+}
 
 $(document).ready(function(){
 
-        if (localStorage.getItem('pages_loaded'))
-            pages_loaded = localStorage.getItem('pages_loaded');
-        else
+       // setCookie('test', 'some value', 1000);
+
+        if (getCookie('pages_loaded')) {
+            pages_loaded = getCookie('pages_loaded');
+        }
+        else {
             pages_loaded = 0;
+        }
+
+
 
         pages_loaded++;
-        localStorage.setItem('pages_loaded', pages_loaded);
+
+        setCookie('pages_loaded', pages_loaded, 3600);
 
 
         // check license key
